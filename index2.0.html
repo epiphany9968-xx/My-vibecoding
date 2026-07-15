@@ -1,0 +1,1167 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>忆眠录 - 治愈三花猫水墨睡眠记录</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'wisteria': '#8e7cc3',    // 紫藤紫
+                        'wisteria-light': '#d9d2e9',
+                        'willow': '#a3b899',      // 柳梢绿
+                        'willow-dark': '#5a6f50',
+                        'peach': '#f4a7b9',       // 桃花粉
+                        'gold-blossom': '#e0b85a', // 金盏黄
+                        'ink-dark': '#2c3539',    // 黛黑瓦色
+                        'ink-slate': '#4f5d65',   // 烟雨灰
+                        'rice-paper': '#f6f2eb',  // 暖调宣纸
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;500;700&family=Ma+Shan+Zheng&display=swap');
+
+        body {
+            font-family: 'Noto Serif SC', 'STKaiti', 'Kaiti SC', serif;
+            /* 升级调整为温润的暖调米白色宣纸背景，带有天然泥金与宣纸沙砾的微妙质感 */
+            background-color: #f7f4ee;
+            background-image: 
+                radial-gradient(rgba(139, 115, 85, 0.05) 1.5px, transparent 0),
+                radial-gradient(rgba(139, 115, 85, 0.02) 1px, transparent 0);
+            background-size: 20px 20px;
+            background-position: 0 0, 10px 10px;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .cursive-font {
+            font-family: 'Ma Shan Zheng', 'STXingkai', '华文行楷', serif;
+        }
+
+        /* 宣纸纹理（半透明，透出 body 泥金水墨底色） */
+        .paper-bg {
+            background-color: rgba(246, 242, 235, 0.88);
+            background-image: 
+                radial-gradient(rgba(142, 124, 195, 0.04) 1px, transparent 0),
+                radial-gradient(rgba(244, 167, 185, 0.03) 1.5px, transparent 0);
+            background-size: 16px 16px;
+            background-position: 0 0, 8px 8px;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            box-shadow: inset 0 0 60px rgba(139, 115, 85, 0.15);
+        }
+
+        /* 隐藏原生滚动条 */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* 极细瓦片重叠纹路 */
+        .chinese-tiles {
+            background: radial-gradient(circle at 50% 100%, rgba(44, 53, 57, 0.95) 60%, rgba(30, 36, 38, 0.98) 100%);
+            border-bottom: 3px solid #14191b;
+            position: relative;
+        }
+        .chinese-tiles::after {
+            content: '';
+            position: absolute;
+            bottom: -6px;
+            left: 0;
+            width: 100%;
+            height: 6px;
+            background-image: radial-gradient(circle at 50% 0%, #c0392b 40%, transparent 45%);
+            background-size: 14px 6px;
+        }
+
+        /* 紫藤和柳梢随风轻摆动效 */
+        @keyframes wisteriaSway {
+            0% { transform: rotate(0deg) translate3d(0, 0, 0); }
+            50% { transform: rotate(4deg) translate3d(3px, 1px, 0); }
+            100% { transform: rotate(0deg) translate3d(0, 0, 0); }
+        }
+        .wisteria-hanging {
+            transform-origin: top center;
+            animation: wisteriaSway 6s ease-in-out infinite;
+        }
+
+        /* 伸懒腰的黑色猫咪动画 */
+        @keyframes stretchCat {
+            0%, 100% { transform: scaleY(1); }
+            50% { transform: scaleY(0.94) scaleX(1.02); }
+        }
+        .stretching-cat {
+            animation: stretchCat 4s ease-in-out infinite;
+            transform-origin: bottom center;
+        }
+
+        /* 三花猫尾巴摇摆 */
+        @keyframes calicoHighTail {
+            0%, 100% { transform: rotate(0deg); }
+            50% { transform: rotate(-12deg) skewX(-3deg); }
+        }
+        .calico-tail-high {
+            animation: calicoHighTail 1.2s ease-in-out infinite;
+            transform-origin: 40px 38px;
+        }
+
+        /* 猫咪拨弄/抓挠毛线球动画 */
+        @keyframes catPawBat {
+            0%, 100% { transform: rotate(0deg); }
+            35% { transform: rotate(-45deg) translate(-2px, -2px); }
+            70% { transform: rotate(15deg) translate(1px, 1px); }
+        }
+        .calico-paw-active {
+            animation: catPawBat 0.4s ease-in-out infinite;
+            transform-origin: 20px 34px;
+        }
+
+        /* 猫咪玩球时的身体微颤/扑腾动作 */
+        @keyframes catWiggle {
+            0%, 100% { transform: scale(1) translateY(0); }
+            50% { transform: scale(1.04) translateY(-3px) rotate(2deg); }
+        }
+        .cat-playing-wiggle {
+            animation: catWiggle 0.4s ease-in-out infinite;
+        }
+
+        /* 切换标签时藤编球的滚动和弹跳动画 */
+        @keyframes ballRollPlay {
+            0% { transform: translateX(0) rotate(0deg); }
+            30% { transform: translateX(-18px) translateY(-8px) rotate(-180deg); }
+            70% { transform: translateX(-4px) translateY(2px) rotate(-320deg); }
+            100% { transform: translateX(0) translateY(0) rotate(-360deg); }
+        }
+        .ball-active {
+            animation: ballRollPlay 0.6s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+        }
+
+        /* 孤舟缓缓漂行 */
+        @keyframes floatBoat {
+            0% { transform: translate3d(-20%, 0, 0); }
+            50% { transform: translate3d(120%, -2px, 0); }
+            50.01% { transform: translate3d(120%, -2px, 0) scaleX(-1); }
+            100% { transform: translate3d(-20%, 0, 0) scaleX(-1); }
+        }
+        .boat {
+            position: absolute;
+            bottom: 12%;
+            width: 32px;
+            height: 16px;
+            opacity: 0.45;
+            animation: floatBoat 48s linear infinite;
+            z-index: 2;
+            pointer-events: none;
+            will-change: transform;
+        }
+
+        /* 旋转春蕾月轮 */
+        @keyframes moonPulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 10px rgba(142, 124, 195, 0.1); }
+            50% { transform: scale(1.03); box-shadow: 0 0 25px rgba(244, 167, 185, 0.25); }
+        }
+        .dream-seal-active {
+            animation: moonPulse 3.5s infinite ease-in-out;
+        }
+
+        /* 朱砂印章视觉样式 */
+        .cinnabar-seal {
+            font-family: 'Ma Shan Zheng', 'STXingkai', serif;
+            border: 2px solid #c0392b;
+            color: #c0392b;
+            background-color: rgba(192, 57, 43, 0.05);
+            text-shadow: 0 0 1px rgba(192, 57, 43, 0.2);
+            box-shadow: inset 0 0 4px rgba(192, 57, 43, 0.15);
+        }
+
+        /* 竖排信纸网格线 */
+        .vertical-text {
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            letter-spacing: 0.35em;
+            line-height: 1.85;
+        }
+
+        /* 柳条垂直时间轴样式 */
+        .willow-timeline-line::after {
+            content: '';
+            position: absolute;
+            left: -13px;
+            top: 24px;
+            bottom: -32px;
+            width: 3px;
+            background: linear-gradient(to bottom, #a3b899 70%, transparent 100%);
+            opacity: 0.6;
+        }
+        .willow-timeline-line:last-child::after {
+            display: none;
+        }
+
+        .stationery-line {
+            background-image: linear-gradient(rgba(142,124,195,0.08) 1px, transparent 1px);
+            background-size: 100% 24px;
+            line-height: 24px;
+        }
+
+        .ink-shadow {
+            box-shadow: 0 10px 30px -10px rgba(142, 124, 195, 0.12);
+        }
+    </style>
+</head>
+<body class="flex justify-center items-center min-h-screen">
+
+    <!-- 仿真圆角框限定480px -->
+    <div class="relative w-full max-w-[480px] h-screen md:h-[90vh] md:rounded-[36px] md:shadow-[0_25px_60px_-15px_rgba(0,0,0,0.65)] overflow-hidden flex flex-col paper-bg">
+        
+        <!-- Canvas 背景：动态飘落桃花瓣与紫藤瓣特效 -->
+        <canvas id="petalCanvas" class="absolute inset-0 w-full h-full pointer-events-none z-0"></canvas>
+        
+        <!-- 孤舟 -->
+        <svg class="boat" viewBox="0 0 24 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M2 10C6 10 7 8 12 8C17 8 18 10 22 10C23 10 24 11 24 12H0C0 11 1 10 2 10Z" fill="#2c3e50" />
+            <path d="M11 8V3L14 5L11 6" stroke="#2c3e50" stroke-width="0.8" fill="none"/>
+            <circle cx="9" cy="6" r="0.8" fill="#2c3e50"/>
+        </svg>
+
+        <!-- 头部：国风黛黑青瓦檐与挂墙紫藤（致敬271_12与267_12屋瓦春景） -->
+        <div class="relative z-10 w-full h-24 chinese-tiles flex flex-col justify-end px-6 pb-2.5 overflow-hidden">
+            <!-- 挂坠紫藤分支 (左侧与右侧) -->
+            <svg class="wisteria-hanging absolute left-2 top-0 w-32 h-20 opacity-90 pointer-events-none" viewBox="0 0 120 80">
+                <path d="M10,0 Q30,20 40,45 Q42,50 45,60" stroke="#5a6f50" stroke-width="1.5" fill="none"/>
+                <path d="M40,0 Q60,30 55,65" stroke="#5a6f50" stroke-width="1.2" fill="none"/>
+                <!-- 花串 -->
+                <circle cx="40" cy="45" r="4" fill="#8e7cc3" opacity="0.8"/>
+                <circle cx="43" cy="52" r="5" fill="#a29bfe" opacity="0.9"/>
+                <circle cx="45" cy="60" r="3.5" fill="#d9d2e9" opacity="0.75"/>
+                <circle cx="55" cy="40" r="4.5" fill="#8e7cc3" opacity="0.8"/>
+                <circle cx="56" cy="50" r="5" fill="#a29bfe" opacity="0.85"/>
+                <circle cx="54" cy="58" r="4" fill="#e8dbfc" opacity="0.9"/>
+                <!-- 柳叶几抹 -->
+                <path d="M15,10 Q2,25 5,35 Q15,25 15,10" fill="#a3b899" opacity="0.7"/>
+                <path d="M30,8 Q20,30 25,40 Q35,25 30,8" fill="#a3b899" opacity="0.6"/>
+            </svg>
+
+            <svg class="wisteria-hanging absolute right-4 top-0 w-40 h-24 opacity-85 pointer-events-none" viewBox="0 0 150 90">
+                <path d="M120,0 Q100,25 90,55" stroke="#5a6f50" stroke-width="1.5" fill="none"/>
+                <circle cx="105" cy="30" r="5.5" fill="#8e7cc3" />
+                <circle cx="98" cy="40" r="6" fill="#a29bfe" />
+                <circle cx="92" cy="50" r="5" fill="#e8dbfc" />
+                <circle cx="90" cy="58" r="4" fill="#fff" opacity="0.9"/>
+                <circle cx="115" cy="45" r="4" fill="#f4a7b9" />
+                <circle cx="120" cy="55" r="3.5" fill="#fd79a8" />
+            </svg>
+
+            <!-- 伸懒腰的屋顶猫咪影子 (致敬 267_12屋脊猫咪) -->
+            <svg class="stretching-cat absolute left-1/3 bottom-1.5 w-10 h-8 opacity-95" viewBox="0 0 30 24" fill="#202224">
+                <path d="M2,20 Q6,12 14,12 Q18,12 21,15 Q24,14 26,10 Q27,8 28,9 Q27,13 25,16 Q23,19 20,20 Q16,21 12,20 Q6,20 2,20 Z" />
+                <path d="M21,15 Q26,14 28,6 Q29,5 29,6 Q28,14 22,16 Z" />
+                <polygon points="17,12 19,8 21,11" />
+                <polygon points="20,13 22,9 23,12" />
+            </svg>
+
+            <!-- 抬头文字 -->
+            <div class="flex justify-between items-end w-full relative z-20">
+                <div class="mb-0.5">
+                    <span id="headerLunar" class="text-[9px] tracking-widest text-rice-paper/70 block font-light">丙申年 · 仲夏紫萝</span>
+                    <h1 class="text-xl font-bold tracking-widest text-white cursive-font">忆眠录</h1>
+                </div>
+                <div id="quickStatus" class="border border-peach/50 text-peach bg-black/30 text-[10px] px-2 py-0.5 rounded font-medium tracking-widest">
+                    安睡中
+                </div>
+            </div>
+        </div>
+
+        <!-- 主内容视窗 -->
+        <main class="flex-1 overflow-y-auto no-scrollbar relative z-10 px-6 py-4 pb-24">
+            
+            <!-- ================== 模块一：【安枕】（每日打卡页） ================== -->
+            <section id="tab-anzhen" class="tab-content flex flex-col justify-between min-h-full py-2">
+                
+                <!-- 顶端意境名句 -->
+                <div class="text-center my-1 min-h-[48px] flex items-center justify-center px-4">
+                    <p id="timeGreeting" class="text-xs text-ink-slate font-medium italic tracking-wider leading-relaxed">
+                        “入眠者，形归于静，神安于舍。”
+                    </p>
+                </div>
+
+                <!-- 卧眠小猫与春蕾月轮图案 (致敬 268_12 柳下猫眠) -->
+                <div class="relative my-4 flex items-center justify-center">
+                    <div id="rippleContainer" class="absolute inset-0 flex items-center justify-center pointer-events-none"></div>
+                    
+                    <button id="btnPunch" class="w-48 h-48 rounded-full dream-seal-active bg-white/70 border-4 border-wisteria flex flex-col justify-center items-center shadow-[0_15px_35px_rgba(142,124,195,0.15)] backdrop-blur-md active:scale-95 transition-all duration-300 z-10 relative overflow-hidden">
+                        <div class="absolute inset-0 bg-gradient-to-tr from-wisteria-light/20 via-peach/10 to-transparent pointer-events-none"></div>
+                        <div id="punchIcon" class="mb-1.5 text-wisteria">
+                            <svg class="w-12 h-12" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <!-- 弯弯新月 -->
+                                <path d="M12 28 C 18 28, 26 22, 26 14 C 26 10, 24 7, 22 5 C 28 8, 30 16, 26 22 C 22 28, 16 30, 12 28 Z" fill="#8e7cc3" opacity="0.85"/>
+                                <!-- 卧眠小橘猫影子 -->
+                                <path d="M14 26 Q12 22 17 21 Q22 20 24 23 Q25 25 22 27 Q18 28 14 26 Z" fill="#e0b85a" />
+                                <path d="M22 22 Q24 21 25 23" stroke="#e0b85a" stroke-width="1.2" stroke-linecap="round"/>
+                            </svg>
+                        </div>
+                        <span id="punchText" class="cursive-font text-3xl font-bold text-wisteria tracking-widest relative z-10">入眠</span>
+                        <span id="punchSub" class="text-[10px] text-wisteria/80 mt-1 tracking-widest relative z-10">静候好梦</span>
+                    </button>
+                </div>
+
+                <!-- 时值面板 -->
+                <div class="text-center mb-4">
+                    <div id="punchTimeDisplay" class="bg-white/45 backdrop-blur-md inline-block px-5 py-1.5 rounded-full border border-wisteria-light/40 text-[11px] text-ink-slate space-y-0.5 shadow-sm">
+                        <span class="inline-block mx-2">入眠：<strong id="sleepTimeVal" class="text-ink-dark font-semibold">— : —</strong></span>
+                        <span class="text-wisteria-light">|</span>
+                        <span class="inline-block mx-2">醒来：<strong id="wakeTimeVal" class="text-ink-dark font-semibold">— : —</strong></span>
+                    </div>
+                </div>
+
+                <!-- 竖版国风经典美学信笺（半透明设计，让背景若隐若现） -->
+                <div class="w-full bg-white/45 backdrop-blur-md rounded-2xl p-5 border border-dashed border-wisteria/35 shadow-sm relative overflow-hidden">
+                    <div class="absolute -bottom-4 -left-4 w-16 h-16 bg-gradient-to-tr from-peach/15 to-transparent rounded-full pointer-events-none"></div>
+                    <div class="absolute top-0 right-0 cinnabar-seal text-[9px] px-1.5 py-0.5 m-2.5 rounded transform rotate-6">修身</div>
+                    <div class="flex justify-around items-center min-h-[150px]">
+                        <div id="classicQuote" class="vertical-text text-ink-dark font-medium text-sm md:text-base max-h-[140px] overflow-hidden leading-loose">
+                            暮春者春服既成冠者五六人童子六七人浴乎沂风乎舞雩咏而归
+                        </div>
+                        <div class="flex flex-col items-center justify-center border-l border-wisteria-light/60 pl-4 h-[120px]">
+                            <span class="cursive-font text-base text-wisteria writing-mode-vertical-rl tracking-widest font-semibold" id="quoteSource">论语</span>
+                            <span class="text-[10px] text-ink-slate mt-3" id="quoteAuthor">孔子</span>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- ================== 模块二：【历影】（古典日历可视化） ================== -->
+            <section id="tab-liying" class="tab-content hidden space-y-4">
+                
+                <!-- 日历卡片（半透明设计） -->
+                <div class="bg-white/50 backdrop-blur-md rounded-2xl p-5 border border-wisteria-light/30 shadow-md">
+                    <!-- 历页导航 -->
+                    <div class="flex justify-between items-center mb-5">
+                        <button id="prevMonth" class="p-1.5 hover:bg-wisteria-light/20 rounded-full text-ink-dark transition-colors"><i data-lucide="chevron-left" class="w-5 h-5"></i></button>
+                        <h2 id="calendarTitle" class="cursive-font text-xl font-bold tracking-widest text-ink-dark">二零二六 · 七月</h2>
+                        <button id="nextMonth" class="p-1.5 hover:bg-wisteria-light/20 rounded-full text-ink-dark transition-colors"><i data-lucide="chevron-right" class="w-5 h-5"></i></button>
+                    </div>
+
+                    <div class="grid grid-cols-7 gap-1 text-center text-xs font-semibold text-ink-slate mb-3 border-b border-dashed border-wisteria-light/60 pb-2.5">
+                        <div class="text-peach">日</div><div>一</div><div>二</div><div>三</div><div>四</div><div>五</div><div class="text-willow-dark">六</div>
+                    </div>
+
+                    <div id="calendarGrid" class="grid grid-cols-7 gap-y-3.5 text-center text-xs">
+                        <!-- JS 动态渲染 -->
+                    </div>
+                </div>
+
+                <!-- 详情卡片（半透明设计） -->
+                <div id="dayDetailBox" class="bg-white/40 backdrop-blur-md rounded-xl p-4 border border-dashed border-wisteria/35 relative overflow-hidden shadow-xs">
+                    <h3 class="font-bold text-ink-dark text-xs mb-2.5 flex items-center">
+                        <span class="w-2.5 h-2.5 rounded-full bg-peach mr-2"></span>
+                        当日安眠志：<span id="selectedDateText" class="ml-1.5 text-[11px] text-ink-slate">选择上方日期查看</span>
+                    </h3>
+                    <div id="selectedDateStatus" class="text-xs text-ink-slate italic leading-relaxed">
+                        点击上方日历中留存有“桃花印”的日期，可凭吊往日沉眠梦影。
+                    </div>
+                </div>
+
+                <!-- 宜忌卡片（半透明设计） -->
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-white/35 backdrop-blur-sm p-3 rounded-xl border border-willow/25 text-center">
+                        <span class="text-[10px] text-willow-dark font-bold block mb-1 tracking-wider">【宜】</span>
+                        <span class="text-xs text-ink-dark font-medium">调息、安枕、阅微、熏香</span>
+                    </div>
+                    <div class="bg-white/35 backdrop-blur-sm p-3 rounded-xl border border-peach/25 text-center">
+                        <span class="text-[10px] text-cinnabar font-bold block mb-1 tracking-wider">【忌】</span>
+                        <span class="text-xs text-ink-dark font-medium">多虑、夜行、饮浓茶、喧哗</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ================== 模块三：【墨迹】（打卡感言与往昔流痕） ================== -->
+            <section id="tab-moji" class="tab-content hidden flex flex-col space-y-6">
+                
+                <!-- 信笺写字卡片（半透明设计） -->
+                <div class="bg-white/60 backdrop-blur-md rounded-2xl p-5 border border-amber-900/10 shadow-lg relative overflow-hidden">
+                    <div class="absolute -top-8 -right-8 w-20 h-20 bg-gradient-to-br from-transparent to-wisteria-light/10 rounded-full pointer-events-none"></div>
+                    <h3 class="cursive-font text-lg text-ink-dark mb-4 tracking-widest flex items-center">
+                        书昨日之梦，记今日之悟
+                    </h3>
+                    
+                    <textarea id="moodInput" rows="3" placeholder="今夜梦回何处？或是有何安眠感悟，皆可落墨于此卷..." class="w-full bg-transparent focus:outline-none text-xs text-ink-dark stationery-line focus:bg-peach/5 transition-colors p-1 placeholder:text-ink-slate/60 placeholder:italic resize-none"></textarea>
+                    
+                    <div class="flex justify-between items-center mt-4">
+                        <button id="btnMoodType" class="text-[10px] px-2.5 py-1 rounded-full border border-wisteria-light bg-wisteria-light/10 text-wisteria hover:border-wisteria flex items-center gap-1 transition-all">
+                            <span>🏷️</span> <span id="moodTagText">宁静</span>
+                        </button>
+                        <button id="btnSubmitMood" class="cinnabar-seal text-xs px-5 py-1.5 rounded-full font-bold active:scale-95 transition-transform duration-150">
+                            落墨留迹
+                        </button>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="cursive-font text-lg text-ink-dark mb-4 tracking-widest flex items-center">
+                        <i data-lucide="scroll" class="w-4 h-4 mr-1.5 text-wisteria"></i> 往昔墨迹
+                    </h3>
+                    
+                    <div id="timelineContainer" class="relative pl-6 space-y-5">
+                        <!-- 由 JS 动态填充 -->
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- 固定底部标签式导航 -->
+        <nav class="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-wisteria-light/80 to-white/90 backdrop-blur-md border-t border-wisteria-light/40 flex justify-around items-center z-20 px-4 pb-2">
+            
+            <!-- 跃动水墨【三花灵猫玩藤编球】指示器 -->
+            <div id="navCatTracker" class="absolute -top-10 left-[16.6%] -translate-x-1/2 w-24 h-14 pointer-events-none transition-all duration-500 ease-out z-30 flex items-end justify-between">
+                
+                <!-- 三花猫侧面容器 -->
+                <div class="w-14 h-14 flex items-end justify-center" style="transform: scaleX(-1); transform-origin: center;">
+                    <svg id="calicoCat" class="w-14 h-14" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <!-- 高耸的尾巴 -->
+                        <g class="calico-tail-high">
+                            <path d="M40 38 C42 30 45 18 41 8 C39 4 36 6 38 10 C40 18 38 30 36 38 Z" fill="#ffffff" />
+                            <path d="M41 8 C39 4 36 6 38 10 C39 13 40 16 41 18 C42 16 41 12 41 8 Z" fill="#2c3539" />
+                            <path d="M40 22 C39 25 38 28 37 31 C38 31 39 28 40 25 Z" fill="#e0b85a" />
+                        </g>
+
+                        <!-- 猫咪身体 -->
+                        <path d="M18 32 C18 26 24 24 32 24 C40 24 44 28 44 38 C44 44 40 46 32 46 C24 46 18 42 18 32 Z" fill="#ffffff" />
+                        
+                        <!-- 身体斑块 -->
+                        <path d="M35 25 C40 25 43 30 43 36 C38 36 35 32 35 25 Z" fill="#2c3539" />
+                        <path d="M22 30 C26 30 28 35 25 40 C22 40 20 35 22 30 Z" fill="#e0b85a" />
+
+                        <!-- 猫咪头部 -->
+                        <circle cx="18" cy="22" r="7" fill="#ffffff" />
+                        <path d="M18 15 C21 15 25 18 23 22 C20 22 18 19 18 15 Z" fill="#e0b85a" />
+                        
+                        <!-- 耳朵 -->
+                        <path d="M15 17 L12 11 L18 14 Z" fill="#e0b85a" />
+                        <path d="M20 16 L23 10 L24 15 Z" fill="#2c3539" />
+
+                        <!-- 侧面面部五官 -->
+                        <path d="M13 22 Q15 23 16 22" stroke="#2c3539" stroke-width="1" stroke-linecap="round" />
+                        <path d="M11 23 L12 23 L11.5 24 Z" fill="#f4a7b9" />
+                        <path d="M11 25 L7 25" stroke="#7f8c8d" stroke-width="0.5" />
+                        <path d="M11 26 L8 28" stroke="#7f8c8d" stroke-width="0.5" />
+
+                        <!-- 后腿 -->
+                        <path d="M38 42 C42 42 45 44 43 48 C41 48 37 46 38 42 Z" fill="#ffffff" />
+                        <path d="M38 42 C40 42 42 44 41 46 Z" fill="#e0b85a" />
+
+                        <!-- 前腿 -->
+                        <path d="M26 40 L26 48 L29 48 L29 40 Z" fill="#ffffff" />
+
+                        <!-- 拨弄球的前爪 -->
+                        <path id="calicoPaw" class="calico-paw-active" d="M20 34 Q12 36 6 42 C5 43 6 44 8 43 L15 38" stroke="#ffffff" stroke-width="3" stroke-linecap="round" fill="none" />
+                    </svg>
+                </div>
+
+                <!-- 藤编球 -->
+                <svg id="rattanBall" class="w-6 h-6 mb-1 opacity-95" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="transform-origin: center;">
+                    <circle cx="12" cy="12" r="10" fill="#e2c9a1" />
+                    <circle cx="12" cy="12" r="10" stroke="#90683a" stroke-width="1.2" />
+                    <path d="M4 12 Q12 4 20 12" stroke="#7c552b" stroke-width="1.5" fill="none"/>
+                    <path d="M4 12 Q12 20 20 12" stroke="#7c552b" stroke-width="1.5" fill="none"/>
+                    <path d="M12 4 Q4 12 12 20" stroke="#5a3d1d" stroke-width="1.2" fill="none"/>
+                    <path d="M12 4 Q20 12 12 20" stroke="#5a3d1d" stroke-width="1.2" fill="none"/>
+                    <path d="M6 6 L18 18" stroke="#90683a" stroke-width="1" stroke-dasharray="2 2" />
+                    <path d="M18 6 L6 18" stroke="#90683a" stroke-width="1" stroke-dasharray="2 2" />
+                </svg>
+
+            </div>
+
+            <button onclick="switchTab('anzhen')" id="nav-anzhen" class="nav-item flex flex-col items-center justify-center flex-1 py-1 text-wisteria transition-all duration-300">
+                <div class="relative flex items-center justify-center p-2 rounded-full">
+                    <!-- 水墨晕染高亮环 -->
+                    <div class="nav-ink-bg absolute inset-0 bg-radial from-wisteria/15 to-transparent rounded-full scale-125 opacity-100 transition-opacity duration-300"></div>
+                    <i data-lucide="moon" class="w-5 h-5 relative z-10"></i>
+                </div>
+                <span class="text-xs cursive-font mt-1 font-bold tracking-widest relative z-10">安枕</span>
+            </button>
+
+            <button onclick="switchTab('liying')" id="nav-liying" class="nav-item flex flex-col items-center justify-center flex-1 py-1 text-ink-slate transition-all duration-300">
+                <div class="relative flex items-center justify-center p-2 rounded-full">
+                    <div class="nav-ink-bg absolute inset-0 bg-radial from-wisteria/15 to-transparent rounded-full scale-125 opacity-0 transition-opacity duration-300"></div>
+                    <i data-lucide="calendar" class="w-5 h-5 relative z-10"></i>
+                </div>
+                <span class="text-xs cursive-font mt-1 font-bold tracking-widest relative z-10">历影</span>
+            </button>
+
+            <button onclick="switchTab('moji')" id="nav-moji" class="nav-item flex flex-col items-center justify-center flex-1 py-1 text-ink-slate transition-all duration-300">
+                <div class="relative flex items-center justify-center p-2 rounded-full">
+                    <div class="nav-ink-bg absolute inset-0 bg-radial from-wisteria/15 to-transparent rounded-full scale-125 opacity-0 transition-opacity duration-300"></div>
+                    <i data-lucide="pen-tool" class="w-5 h-5 relative z-10"></i>
+                </div>
+                <span class="text-xs cursive-font mt-1 font-bold tracking-widest relative z-10">墨迹</span>
+            </button>
+
+        </nav>
+
+        <!-- 优雅古典遮罩提示框 -->
+        <div id="toastBox" class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white/95 border-[3px] border-double border-wisteria p-6 rounded-2xl shadow-2xl z-50 text-center w-72 opacity-0 pointer-events-none transition-all duration-500 scale-90">
+            <div class="cinnabar-seal w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3.5 text-lg font-bold">
+                印
+            </div>
+            <p id="toastMessage" class="text-xs font-semibold text-ink-dark tracking-wider leading-relaxed">打卡成功</p>
+            <button onclick="closeToast()" class="mt-4 px-4 py-1.5 bg-wisteria text-white text-xs rounded-md hover:bg-indigo-900 transition-colors">知悉</button>
+        </div>
+
+        <!-- 优雅古典确认提示框 -->
+        <div id="confirmBox" class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white/95 border-[3px] border-double border-wisteria p-6 rounded-2xl shadow-2xl z-50 text-center w-72 opacity-0 pointer-events-none transition-all duration-500 scale-90">
+            <div class="cinnabar-seal w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3.5 text-lg font-bold">
+                虑
+            </div>
+            <p id="confirmMessage" class="text-xs font-semibold text-ink-dark tracking-wider leading-relaxed">确定要抹除此条记录吗？</p>
+            <div class="flex justify-around gap-4 mt-5">
+                <button id="btnConfirmYes" class="flex-1 py-1.5 bg-wisteria text-white text-xs rounded-md hover:bg-indigo-950 transition-colors">确定</button>
+                <button onclick="closeConfirm()" class="flex-1 py-1.5 border border-wisteria-light text-ink-dark text-xs rounded-md hover:bg-gray-100 transition-colors">取消</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // ------------------ 状态与数据管理 ------------------
+        let appState = {
+            isSleeping: false, // 睡眠标记
+            currentTab: 'anzhen',
+            currentDate: new Date(),
+            moodTag: '宁静',
+            records: [
+                {
+                    date: '2026-07-13',
+                    sleepTime: '22:30',
+                    wakeTime: '06:30',
+                    duration: 8.0,
+                    mood: '香甜安稳，夜半听风，神清气爽。',
+                    moodTag: '宁静'
+                },
+                {
+                    date: '2026-07-14',
+                    sleepTime: '23:15',
+                    wakeTime: '07:05',
+                    duration: 7.8,
+                    mood: '梦见金灿灿的春花挂满屋檐，几只三花猫咪在暖和台阶上嬉弄线球，极其快意。',
+                    moodTag: '悠然'
+                }
+            ]
+        };
+
+        const MOOD_TAGS = ['宁静', '悠然', '浅眠', '多梦', '困倦'];
+
+        // 四书五经/诗词名句
+        const CLASSIC_QUOTES = [
+            { text: "暮春者，春服既成，冠者五六人，童子六七人，浴乎沂，风乎舞雩，咏而归。", source: "论语·先进", author: "孔子" },
+            { text: "知者乐水，仁者乐山。知者动，仁者静。知者乐，仁者寿。", source: "论语·雍也", author: "孔子" },
+            { text: "窈窕淑女，寤寐求之。求之不得，寤寐思服. 优哉游哉，辗转反侧。", source: "诗经·关雎", author: "国风" },
+            { text: "昔者庄周梦为蝴蝶，栩栩然蝴蝶也，自喻适志与！", source: "庄子·齐物论", author: "庄周" },
+            { text: "水击三千里，抟扶摇而上者九万里，去以六月息者也。", source: "庄子·逍遥游", author: "庄周" },
+            { text: "青青子衿，悠悠我心。但为君故，沉吟至今。", source: "诗经·郑风", author: "佚名" },
+            { text: "桃之夭夭，灼灼其华。之子于归，宜其室家。", source: "诗经·周南", author: "国风" }
+        ];
+
+        // 农历对照
+        const LUNAR_MONTHS = ["春馨", "仲春", "三春", "槐序", "仲夏", "季夏", "孟秋", "桂月", "菊月", "露华", "瑞雪", "岁末"];
+
+        // ------------------ 页面启动初始化 ------------------
+        window.addEventListener('DOMContentLoaded', () => {
+            // 初始化图标
+            lucide.createIcons();
+            
+            // 初始化 Canvas 飞花背景
+            initPetalCanvas();
+            
+            // 首次渲染
+            refreshQuoteAndHeader();
+            renderCalendar();
+            renderTimeline();
+            
+            // 自动定时落花落叶
+            setInterval(createAutomaticPetalDrop, 3500);
+
+            // 监听手指触摸与点击产生墨水
+            document.body.addEventListener('touchstart', handleScreenTouch, { passive: true });
+            document.body.addEventListener('click', handleScreenClick);
+
+            // 按钮事件绑定
+            document.getElementById('btnPunch').addEventListener('click', handlePunch);
+            document.getElementById('btnSubmitMood').addEventListener('click', handleAddMood);
+            document.getElementById('btnMoodType').addEventListener('click', switchMoodTag);
+
+            // 快捷日历翻月
+            document.getElementById('prevMonth').addEventListener('click', (e) => {
+                e.stopPropagation();
+                appState.currentDate.setMonth(appState.currentDate.getMonth() - 1);
+                renderCalendar();
+            });
+            document.getElementById('nextMonth').addEventListener('click', (e) => {
+                e.stopPropagation();
+                appState.currentDate.setMonth(appState.currentDate.getMonth() + 1);
+                renderCalendar();
+            });
+        });
+
+        // ------------------ Canvas 唯美飘花与落叶 ------------------
+        let canvas, ctx;
+        let elements = [];
+
+        function initPetalCanvas() {
+            canvas = document.getElementById('petalCanvas');
+            ctx = canvas.getContext('2d');
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+            
+            // 启动渲染流
+            requestAnimationFrame(animateElements);
+        }
+
+        function resizeCanvas() {
+            const rect = canvas.parentNode.getBoundingClientRect();
+            canvas.width = rect.width;
+            canvas.height = rect.height;
+        }
+
+        class DroppingElement {
+            constructor(x, y, type) {
+                this.x = x;
+                this.y = y;
+                // 调整类型：全部设定为花瓣类型
+                this.type = 'petal';
+                this.size = Math.random() * 8 + 6;
+                this.opacity = Math.random() * 0.6 + 0.3;
+                this.speedY = Math.random() * 1.2 + 0.8;
+                this.speedX = Math.random() * 0.6 - 0.3;
+                this.angle = Math.random() * Math.PI;
+                this.angleSpeed = Math.random() * 0.02 - 0.01;
+                
+                // 聚焦紫罗兰花瓣的色系
+                const colors = [
+                    'rgba(142, 124, 195, ',  // 柔和紫藤
+                    'rgba(110, 80, 200, ',   // 鲜亮紫罗兰
+                    'rgba(180, 150, 230, ',  // 淡紫罗兰
+                    'rgba(120, 100, 180, '   // 深紫罗兰
+                ];
+                this.colorBase = colors[Math.floor(Math.random() * colors.length)];
+            }
+
+            draw() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.angle);
+                ctx.beginPath();
+                
+                if (this.type === 'petal') {
+                    ctx.fillStyle = this.colorBase + this.opacity + ')';
+                    ctx.ellipse(0, 0, this.size, this.size * 0.6, 0, 0, Math.PI * 2);
+                    ctx.fill();
+                } else if (this.type === 'willow-leaf') {
+                    ctx.fillStyle = 'rgba(163, 184, 153, ' + this.opacity + ')';
+                    ctx.beginPath();
+                    ctx.moveTo(-this.size, 0);
+                    ctx.quadraticCurveTo(0, -this.size * 0.3, this.size, 0);
+                    ctx.quadraticCurveTo(0, this.size * 0.3, -this.size, 0);
+                    ctx.closePath();
+                    ctx.fill();
+                } else {
+                    let grad = ctx.createRadialGradient(0, 0, 1, 0, 0, this.size * 4);
+                    grad.addColorStop(0, this.colorBase + this.opacity * 0.7 + ')');
+                    grad.addColorStop(0.5, this.colorBase + this.opacity * 0.2 + ')');
+                    grad.addColorStop(1, 'rgba(255,255,255,0)');
+                    ctx.fillStyle = grad;
+                    ctx.arc(0, 0, this.size * 4, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                ctx.restore();
+            }
+
+            update() {
+                this.y += this.speedY;
+                this.x += this.speedX + Math.sin(this.y / 30) * 0.2;
+                this.angle += this.angleSpeed;
+                
+                if (this.y > canvas.height - 50) {
+                    this.opacity -= 0.01;
+                }
+            }
+        }
+
+        function animateElements() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            elements = elements.filter(el => el.opacity > 0 && el.y < canvas.height && el.x > 0 && el.x < canvas.width);
+            elements.forEach(el => {
+                el.update();
+                el.draw();
+            });
+            requestAnimationFrame(animateElements);
+        }
+
+        function createAutomaticPetalDrop() {
+            if (elements.length < 40) {
+                const x = Math.random() * canvas.width;
+                elements.push(new DroppingElement(x, -10));
+            }
+        }
+
+        function triggerSplash(x, y) {
+            for (let i = 0; i < 12; i++) {
+                let el = new DroppingElement(x, y);
+                el.speedY = Math.random() * 3 - 1.5;
+                el.speedX = Math.random() * 3 - 1.5;
+                elements.push(el);
+            }
+            elements.push(new DroppingElement(x, y, 'watercolor'));
+        }
+
+        function handleScreenTouch(e) {
+            if (e.touches && e.touches[0]) {
+                const rect = canvas.getBoundingClientRect();
+                triggerSplash(e.touches[0].clientX - rect.left, e.touches[0].clientY - rect.top);
+            }
+        }
+
+        function handleScreenClick(e) {
+            const rect = canvas.getBoundingClientRect();
+            triggerSplash(e.clientX - rect.left, e.clientY - rect.top);
+        }
+
+        // ------------------ 切换导航标签 & 猫咪玩耍动画 ------------------
+        function switchTab(tabId) {
+            appState.currentTab = tabId;
+            
+            // 切换面板展示
+            document.querySelectorAll('.tab-content').forEach(el => {
+                el.classList.add('hidden');
+            });
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+
+            // 切换标签高亮状态
+            document.querySelectorAll('.nav-item').forEach(btn => {
+                btn.classList.remove('text-wisteria');
+                btn.classList.add('text-ink-slate');
+                const inkBg = btn.querySelector('.nav-ink-bg');
+                inkBg.classList.add('opacity-0');
+                inkBg.classList.remove('opacity-100');
+            });
+            
+            const activeNav = document.getElementById(`nav-${tabId}`);
+            activeNav.classList.remove('text-ink-slate');
+            activeNav.classList.add('text-wisteria');
+            
+            const activeInkBg = activeNav.querySelector('.nav-ink-bg');
+            activeInkBg.classList.remove('opacity-0');
+            activeInkBg.classList.add('opacity-100');
+
+            // 触发三花猫玩藤编球的物理动效与滑动
+            const tracker = document.getElementById('navCatTracker');
+            const ball = document.getElementById('rattanBall');
+            const cat = document.getElementById('calicoCat');
+            const paw = document.getElementById('calicoPaw');
+
+            if (tabId === 'anzhen') {
+                tracker.style.left = '16.6%';
+            } else if (tabId === 'liying') {
+                tracker.style.left = '50%';
+            } else if (tabId === 'moji') {
+                tracker.style.left = '83.3%';
+            }
+
+            // 触发藤编球旋转翻滚动画，以及猫咪身体的活跃兴奋抖动
+            ball.classList.remove('ball-active');
+            cat.classList.remove('cat-playing-wiggle');
+            paw.classList.add('calico-paw-active');
+            void ball.offsetWidth; // 触发重绘
+
+            ball.classList.add('ball-active');
+            cat.classList.add('cat-playing-wiggle');
+
+            // 0.8秒后恢复到平常的猫咪姿态
+            setTimeout(() => {
+                cat.classList.remove('cat-playing-wiggle');
+            }, 800);
+
+            // 导航点击反馈
+            const rect = activeNav.getBoundingClientRect();
+            const canvasRect = canvas.getBoundingClientRect();
+            triggerSplash(rect.left + rect.width / 2 - canvasRect.left, rect.top - canvasRect.top);
+        }
+
+        // ------------------ 睡眠打卡机制 ------------------
+        function handlePunch(e) {
+            e.stopPropagation();
+            const btn = e.currentTarget;
+            const rect = btn.getBoundingClientRect();
+            const canvasRect = canvas.getBoundingClientRect();
+            
+            // 触发漫天爆花
+            triggerSplash(rect.left + rect.width / 2 - canvasRect.left, rect.top + rect.height / 2 - canvasRect.top);
+
+            const container = document.getElementById('rippleContainer');
+            const ripple = document.createElement('div');
+            ripple.className = 'ink-ripple-effect';
+            ripple.style.width = '140px';
+            ripple.style.height = '140px';
+            container.appendChild(ripple);
+            setTimeout(() => ripple.remove(), 1400);
+
+            const now = new Date();
+            const timeString = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+            const dateString = now.toISOString().split('T')[0];
+
+            if (!appState.isSleeping) {
+                appState.isSleeping = true;
+                
+                document.getElementById('punchText').innerText = "醒来";
+                document.getElementById('punchSub').innerText = "晨光熹微";
+                document.getElementById('punchIcon').innerHTML = `
+                    <svg class="w-12 h-12" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="28" cy="12" r="6" fill="#f4a7b9" opacity="0.85"/>
+                        <path d="M12 28 Q14 20 22 21 Q25 21 27 24 Q29 23 29 25 Q26 27 22 28 Z" fill="#2c3e50" />
+                    </svg>
+                `;
+                
+                const quickStatus = document.getElementById('quickStatus');
+                quickStatus.innerText = "安眠中";
+                quickStatus.className = "border border-wisteria text-wisteria bg-wisteria-light/10 text-[10px] px-2 py-0.5 rounded font-medium tracking-widest";
+                
+                document.getElementById('sleepTimeVal').innerText = timeString;
+                document.getElementById('wakeTimeVal').innerText = "— : —";
+
+                let todayRec = appState.records.find(r => r.date === dateString);
+                if (!todayRec) {
+                    todayRec = {
+                        date: dateString,
+                        sleepTime: timeString,
+                        wakeTime: '',
+                        duration: 0,
+                        mood: '静度良宵，夜梦安稳。',
+                        moodTag: '宁静'
+                    };
+                    appState.records.push(todayRec);
+                } else {
+                    todayRec.sleepTime = timeString;
+                }
+
+                showToast("三花伴枕，安然入梦。<br>愿紫萝春梦临门，周身神怡。");
+            } else {
+                appState.isSleeping = false;
+                
+                document.getElementById('punchText').innerText = "入眠";
+                document.getElementById('punchSub').innerText = "静等好梦";
+                document.getElementById('punchIcon').innerHTML = `
+                    <svg class="w-12 h-12" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 28 C 18 28, 26 22, 26 14 C 26 10, 24 7, 22 5 C 28 8, 30 16, 26 22 C 22 28, 16 30, 12 28 Z" fill="#8e7cc3" opacity="0.85"/>
+                        <path d="M14 26 Q12 22 17 21 Q22 20 24 23 Q25 25 22 27 Q18 28 14 26 Z" fill="#e0b85a" />
+                        <path d="M22 22 Q24 21 25 23" stroke="#e0b85a" stroke-width="1.2" stroke-linecap="round"/>
+                    </svg>
+                `;
+                
+                const quickStatus = document.getElementById('quickStatus');
+                quickStatus.innerText = "已清醒";
+                quickStatus.className = "border border-willow-dark text-willow-dark bg-willow/10 text-[10px] px-2 py-0.5 rounded font-medium tracking-widest";
+                
+                document.getElementById('wakeTimeVal').innerText = timeString;
+
+                let todayRec = appState.records.find(r => r.date === dateString);
+                if (todayRec) {
+                    todayRec.wakeTime = timeString;
+                    const [sh, sm] = todayRec.sleepTime.split(':').map(Number);
+                    const [eh, em] = timeString.split(':').map(Number);
+                    let diffMinutes = (eh * 60 + em) - (sh * 60 + sm);
+                    if (diffMinutes < 0) diffMinutes += 24 * 60;
+                    todayRec.duration = parseFloat((diffMinutes / 60).toFixed(1));
+                }
+
+                showToast("清光大好，三花猫已跳上窗台。<br>一日之计在于晨，今日顺意。");
+                refreshQuoteAndHeader();
+            }
+
+            lucide.createIcons();
+            renderCalendar();
+            renderTimeline();
+        }
+
+        function refreshQuoteAndHeader() {
+            const idx = Math.floor(Math.random() * CLASSIC_QUOTES.length);
+            const q = CLASSIC_QUOTES[idx];
+            document.getElementById('classicQuote').innerText = q.text;
+            document.getElementById('quoteSource').innerText = q.source;
+            document.getElementById('quoteAuthor').innerText = q.author;
+
+            const now = new Date();
+            const lunarMonth = LUNAR_MONTHS[now.getMonth()];
+            document.getElementById('headerLunar').innerText = `丙申年 · ${lunarMonth}萝`;
+
+            const hour = now.getHours();
+            let greeting = "“枕上诗书，门前山水。”";
+            if (hour >= 21 || hour < 4) {
+                greeting = "“夜阑人静，檐下藤香，神安则体泰，宜安寝。”";
+            } else if (hour >= 4 && hour < 10) {
+                greeting = "“三花灵猫初醒，东方既白，清气东来。”";
+            } else {
+                greeting = "“浮生若梦，静神养心，春风拂槛露华浓。”";
+            }
+            document.getElementById('timeGreeting').innerText = greeting;
+        }
+
+        // ------------------ 模块二：【历影】日历网格 ------------------
+        function renderCalendar() {
+            const year = appState.currentDate.getFullYear();
+            const month = appState.currentDate.getMonth();
+            
+            const chineseMonths = ["正月", "杏月", "桃月", "槐月", "蒲月", "荷月", "兰月", "桂月", "梦月", "露月", "冬月", "腊月"];
+            document.getElementById('calendarTitle').innerText = `二零二六 · ${chineseMonths[month]}`;
+
+            const calendarGrid = document.getElementById('calendarGrid');
+            calendarGrid.innerHTML = '';
+
+            const firstDayIndex = new Date(year, month, 1).getDay();
+            const totalDaysInMonth = new Date(year, month + 1, 0).getDate();
+
+            for (let i = 0; i < firstDayIndex; i++) {
+                calendarGrid.appendChild(document.createElement('div'));
+            }
+
+            for (let day = 1; day <= totalDaysInMonth; day++) {
+                const dayStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                const hasRecord = appState.records.find(r => r.date === dayStr);
+
+                const dayCell = document.createElement('div');
+                dayCell.className = "relative p-2.5 flex flex-col items-center justify-center cursor-pointer hover:bg-wisteria-light/30 rounded-full transition-all duration-150";
+                
+                const dayLabel = document.createElement('span');
+                dayLabel.innerText = day;
+                dayLabel.className = "text-ink-dark font-medium relative z-10 text-[11px] md:text-xs";
+                
+                const today = new Date();
+                if (today.getFullYear() === year && today.getMonth() === month && today.getDate() === day) {
+                    dayLabel.className = "text-white bg-wisteria w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold shadow-md";
+                }
+                dayCell.appendChild(dayLabel);
+
+                if (hasRecord) {
+                    const stamp = document.createElement('div');
+                    stamp.className = "absolute w-7 h-7 rounded-full border border-dashed border-peach/80 bg-peach/10 animate-pulse pointer-events-none flex items-center justify-center";
+                    stamp.innerHTML = '<div class="w-1.5 h-1.5 rounded-full bg-peach"></div>';
+                    dayCell.appendChild(stamp);
+                    
+                    dayCell.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        showRecordDetail(hasRecord);
+                        const r = dayCell.getBoundingClientRect();
+                        const cRect = canvas.getBoundingClientRect();
+                        triggerSplash(r.left + r.width / 2 - cRect.left, r.top + r.height / 2 - cRect.top);
+                    });
+                } else {
+                    dayCell.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        document.getElementById('selectedDateText').innerText = `${month + 1}月${day}日`;
+                        document.getElementById('selectedDateStatus').innerHTML = "<span class='text-xs text-ink-slate italic'>当日无睡眠志，烟雨江南，宜养心神。</span>";
+                    });
+                }
+
+                calendarGrid.appendChild(dayCell);
+            }
+        }
+
+        function showRecordDetail(rec) {
+            const dateParts = rec.date.split('-');
+            document.getElementById('selectedDateText').innerText = `${parseInt(dateParts[1])}月${parseInt(dateParts[2])}日`;
+            
+            let html = `
+                <div class="space-y-2 mt-2 text-xs text-ink-dark leading-relaxed relative">
+                    <p>🌙 <strong>入枕起居：</strong> ${rec.sleepTime} 安枕 / ${rec.wakeTime || '翌日'} 醒来</p>
+                    <p>⏳ <strong>酣眠时辰：</strong> ${rec.duration || '—'} 小时 (${(rec.duration/2).toFixed(1)} 时辰)</p>
+                    <p>🏷️ <strong>心境气调：</strong> <span class="px-1.5 py-0.2 text-[9px] border border-wisteria/30 rounded text-wisteria bg-wisteria-light/10">${rec.moodTag || '宁静'}</span></p>
+                    <p>💭 <strong>梦境感言：</strong> <span class="italic text-ink-slate">“${rec.mood || '此时一言未落，睡意深浓。'}”</span></p>
+                    <div class="mt-3 pt-2 border-t border-dashed border-wisteria-light flex justify-end">
+                        <button onclick="deleteRecord('${rec.date}')" class="text-[10px] text-cinnabar hover:text-red-700 border border-peach/40 hover:border-peach bg-peach/5 px-2 py-0.5 rounded transition-all flex items-center gap-1">
+                            <i data-lucide="trash-2" class="w-3 h-3"></i> 抹除此迹
+                        </button>
+                    </div>
+                </div>
+            `;
+            document.getElementById('selectedDateStatus').innerHTML = html;
+            lucide.createIcons();
+        }
+
+        let onConfirmAction = null;
+
+        function showConfirm(msg, onYes) {
+            const confirmBox = document.getElementById('confirmBox');
+            document.getElementById('confirmMessage').innerHTML = msg;
+            onConfirmAction = onYes;
+            confirmBox.classList.remove('opacity-0', 'pointer-events-none', 'scale-90');
+            confirmBox.classList.add('opacity-100', 'scale-100');
+
+            const btnYes = document.getElementById('btnConfirmYes');
+            btnYes.onclick = () => {
+                if (onConfirmAction) onConfirmAction();
+                closeConfirm();
+            };
+        }
+
+        function closeConfirm() {
+            const confirmBox = document.getElementById('confirmBox');
+            confirmBox.classList.remove('opacity-100', 'scale-100');
+            confirmBox.classList.add('opacity-0', 'pointer-events-none', 'scale-90');
+            onConfirmAction = null;
+        }
+
+        function deleteRecord(date) {
+            showConfirm(`确定要抹除 <strong>${date}</strong> 的安眠志吗？<br>一经抹除，前尘墨迹将消散如烟。`, () => {
+                appState.records = appState.records.filter(r => r.date !== date);
+                
+                const todayStr = new Date().toISOString().split('T')[0];
+                if (date === todayStr) {
+                    appState.isSleeping = false;
+                    document.getElementById('punchText').innerText = "入眠";
+                    document.getElementById('punchSub').innerText = "静等好梦";
+                    document.getElementById('punchIcon').innerHTML = `
+                        <svg class="w-12 h-12" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 28 C 18 28, 26 22, 26 14 C 26 10, 24 7, 22 5 C 28 8, 30 16, 26 22 C 22 28, 16 30, 12 28 Z" fill="#8e7cc3" opacity="0.85"/>
+                            <path d="M14 26 Q12 22 17 21 Q22 20 24 23 Q25 25 22 27 Q18 28 14 26 Z" fill="#e0b85a" />
+                            <path d="M22 22 Q24 21 25 23" stroke="#e0b85a" stroke-width="1.2" stroke-linecap="round"/>
+                        </svg>
+                    `;
+                    const quickStatus = document.getElementById('quickStatus');
+                    quickStatus.innerText = "已醒";
+                    quickStatus.className = "border border-willow-dark text-willow-dark bg-willow/10 text-[10px] px-2 py-0.5 rounded font-medium tracking-widest";
+                    document.getElementById('sleepTimeVal').innerText = "— : —";
+                    document.getElementById('wakeTimeVal').innerText = "— : —";
+                    lucide.createIcons();
+                }
+
+                renderCalendar();
+                renderTimeline();
+
+                document.getElementById('selectedDateText').innerText = "选择上方日期查看";
+                document.getElementById('selectedDateStatus').innerHTML = "点击上方日历中留存有“桃花印”的日期，可凭吊往日沉眠梦影。";
+
+                showToast("此日睡眠志已被成功抹除。");
+            });
+        }
+
+        // ------------------ 模块三：【墨迹】时光树 ------------------
+        function switchMoodTag(e) {
+            e.stopPropagation();
+            const currentIdx = MOOD_TAGS.indexOf(appState.moodTag);
+            const nextIdx = (currentIdx + 1) % MOOD_TAGS.length;
+            appState.moodTag = MOOD_TAGS[nextIdx];
+            document.getElementById('moodTagText').innerText = appState.moodTag;
+        }
+
+        function handleAddMood(e) {
+            e.stopPropagation();
+            const text = document.getElementById('moodInput').value.trim();
+            if (!text) {
+                showToast("信笺之上空无一物，还请落墨几笔。");
+                return;
+            }
+
+            const now = new Date();
+            const dateString = now.toISOString().split('T')[0];
+
+            let todayRec = appState.records.find(r => r.date === dateString);
+            if (!todayRec) {
+                todayRec = {
+                    date: dateString,
+                    sleepTime: '23:00',
+                    wakeTime: '07:00',
+                    duration: 8.0,
+                    mood: text,
+                    moodTag: appState.moodTag
+                };
+                appState.records.push(todayRec);
+            } else {
+                todayRec.mood = text;
+                todayRec.moodTag = appState.moodTag;
+            }
+
+            document.getElementById('moodInput').value = '';
+            renderTimeline();
+            renderCalendar();
+
+            showToast("落墨入卷，三花猫也在此留下了小脚印。");
+            triggerSplash(canvas.width / 2, canvas.height * 0.4);
+        }
+
+        // 历史时间轴（半透明卡片设计，让背景若隐若现）
+        function renderTimeline() {
+            const container = document.getElementById('timelineContainer');
+            container.innerHTML = '';
+
+            const sorted = [...appState.records].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+            sorted.forEach(rec => {
+                const node = document.createElement('div');
+                node.className = "willow-timeline-line relative bg-white/45 backdrop-blur-md p-4 rounded-xl border border-willow/25 shadow-xs ink-shadow transition-transform active:scale-[0.99]";
+                
+                const stampPin = document.createElement('div');
+                stampPin.className = "absolute -left-[30px] top-4 w-4 h-4 rounded-full bg-rice-paper border-2 border-peach flex items-center justify-center z-10 shadow-sm";
+                stampPin.innerHTML = `<div class="w-1.5 h-1.5 rounded-full bg-peach"></div>`;
+                node.appendChild(stampPin);
+
+                const dateObj = new Date(rec.date);
+                const showDate = `${dateObj.getMonth() + 1}月${dateObj.getDate()}日`;
+                
+                let colorClass = "bg-wisteria/10 text-wisteria border-wisteria-light";
+                if (rec.moodTag === '悠然') colorClass = "bg-willow/10 text-willow-dark border-willow/30";
+                if (rec.moodTag === '多梦') colorClass = "bg-peach/10 text-peach border-peach/30";
+                if (rec.moodTag === '困倦') colorClass = "bg-gold-blossom/10 text-gold-blossom border-gold-blossom/20";
+
+                node.innerHTML += `
+                    <div class="flex justify-between items-center mb-1.5">
+                        <span class="text-xs font-bold text-ink-dark cursive-font tracking-widest">${showDate}</span>
+                        <div class="flex space-x-1.5 items-center">
+                            <span class="text-[9px] px-1.5 py-0.5 rounded-full border ${colorClass}">${rec.moodTag || '宁静'}</span>
+                            <span class="text-[9px] text-ink-slate">${rec.sleepTime} - ${rec.wakeTime || '翌醒'}</span>
+                        </div>
+                    </div>
+                    <p class="text-xs text-ink-dark leading-relaxed italic font-light">“${rec.mood || '今日无梦，亦无忧。'}”</p>
+                    <div class="flex justify-between items-center mt-2.5 pt-1.5 border-t border-dashed border-wisteria-light/40">
+                        <button onclick="deleteRecord('${rec.date}')" class="text-[9px] text-cinnabar hover:text-red-700 transition-all flex items-center gap-0.5">
+                            <i data-lucide="trash-2" class="w-2.5 h-2.5"></i> 抹除此迹
+                        </button>
+                        <div class="text-[9px] text-ink-slate">
+                            沉眠：${rec.duration || '—'} 小时
+                        </div>
+                    </div>
+                `;
+
+                container.appendChild(node);
+            });
+            lucide.createIcons();
+        }
+
+        // ------------------ 弹出提示控制 ------------------
+        function showToast(msg) {
+            const toast = document.getElementById('toastBox');
+            document.getElementById('toastMessage').innerHTML = msg;
+            toast.classList.remove('opacity-0', 'pointer-events-none', 'scale-90');
+            toast.classList.add('opacity-100', 'scale-100');
+        }
+
+        function closeToast() {
+            const toast = document.getElementById('toastBox');
+            toast.classList.remove('opacity-100', 'scale-100');
+            toast.classList.add('opacity-0', 'pointer-events-none', 'scale-90');
+        }
+    </script>
+</body>
+</html>
