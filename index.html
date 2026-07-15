@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>墨香入梦 - 中国风睡眠记录</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;500;700;900&display=swap');
+        
+        body {
+            font-family: 'Noto Serif SC', serif;
+            background-color: #f4f1ea;
+            background-image: radial-gradient(rgba(0, 0, 0, 0.03) 1px, transparent 0),
+                              radial-gradient(rgba(0, 0, 0, 0.03) 1px, transparent 0);
+            background-size: 8px 8px;
+            background-position: 0 0, 4px 4px;
+            color: #2c2c2c;
+        }
+
+        /* 水墨晕染效果 */
+        .ink-bleed {
+            filter: blur(10px);
+            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        .ink-bleed:hover {
+            filter: blur(2px);
+        }
+
+        /* 宣纸边框与阴影 */
+        .xuan-paper {
+            background-color: rgba(252, 251, 247, 0.9);
+            border: 1px solid #e2ded5;
+            box-shadow: 0 10px 30px -10px rgba(44, 44, 44, 0.1);
+            position: relative;
+        }
+        .xuan-paper::before {
+            content: '';
+            position: absolute;
+            top: 4px; left: 4px; right: 4px; bottom: 4px;
+            border: 1px solid rgba(139, 126, 102, 0.15);
+            pointer-events: none;
+        }
+
+        /* 传统印章 */
+        .seal {
+            font-family: 'Noto Serif SC', serif;
+            font-weight: 900;
+            border: 2px solid #a61c1c;
+            color: #a61c1c;
+            padding: 2px 6px;
+            text-transform: uppercase;
+            writing-mode: vertical-rl;
+            letter-spacing: 2px;
+            background-color: rgba(166, 28, 28, 0.03);
+            box-shadow: inset 0 0 4px rgba(166, 28, 28, 0.1);
+        }
+
+        /* 墨迹渐变背景 */
+        .ink-gradient {
+            background: linear-gradient(180deg, #1a1a1a 0%, #4a4a4a 40%, #8c8c8c 80%, #f4f1ea 100%);
+        }
+
+        /* 隐藏滚动条 */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* 自定义滑块 */
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            background: #e2ded5;
+            height: 4px;
+            border-radius: 2px;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #2c2c2c;
+            cursor: pointer;
+            border: 2px solid #f4f1ea;
+        }
+
+        /* 呼吸动画效果，模拟云雾/水墨飘动 */
+        @keyframes drift {
+            0% { transform: translateY(0px) scale(1); opacity: 0.2; }
+            50% { transform: translateY(-10px) scale(1.05); opacity: 0.4; }
+            100% { transform: translateY(0px) scale(1); opacity: 0.2; }
+        }
+        .cloud-drift {
+            animation: drift 8s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between py-6 px-4 md:px-8">
+
+    <!-- 背景水墨虚化图 -->
+    <div class="fixed inset-0 pointer-events-none overflow-hidden z-0">
+        <!-- 远山意象 -->
+        <div class="absolute bottom-0 left-0 right-0 h-96 ink-bleed opacity-15 bg-gradient-to-t from-zinc-800 to-transparent"></div>
+        <!-- 动态墨团 1 -->
+        <div class="absolute -top-20 -left-20 w-96 h-96 rounded-full bg-zinc-900 filter blur-[100px] opacity-[0.06] cloud-drift"></div>
+        <!-- 动态墨团 2 -->
+        <div class="absolute top-1/3 right-10 w-80 h-80 rounded-full bg-stone-700 filter blur-[80px] opacity-[0.04] cloud-drift" style="animation-delay: -4s;"></div>
+    </div>
+
+    <!-- 顶部导航 & 斋号（标题） -->
+    <header class="relative z-10 max-w-6xl w-full mx-auto flex justify-between items-center mb-8">
+        <div class="flex items-center space-x-4">
+            <div class="seal text-xs md:text-sm">墨香入梦</div>
+            <div>
+                <h1 class="text-2xl md:text-3xl font-bold tracking-widest text-stone-800">静心眠阁</h1>
+                <p class="text-xs text-stone-500 font-sans mt-0.5">半枕清风 梦回江南</p>
+            </div>
+        </div>
+        
+        <!-- 今日日期（干支历法/农历感） -->
+        <div class="text-right border-l border-stone-300 pl-4">
+            <div class="text-xs text-stone-500" id="date-lunar">丙戌年 荷月 初一</div>
+            <div class="text-lg font-bold text-stone-800" id="date-gregorian">2026年7月15日</div>
+            <div class="text-xs text-amber-800 font-medium" id="date-solar-term">✦ 暑伏养神 ✦</div>
+        </div>
+    </header>
+
+    <!-- 主体内容 -->
+    <main class="relative z-10 max-w-6xl w-full mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 items-start mb-8">
+        
+        <!-- 左侧：梦境看板 & 新增记录 (7 cols) -->
+        <section class="lg:col-span-7 space-y-8">
+            
+            <!-- 昨夜眠歌（昨日睡眠仪表盘） -->
+            <div class="xuan-paper p-6 rounded-lg">
+                <h2 class="text-lg font-semibold text-stone-800 mb-6 flex items-center gap-2">
+                    <i data-lucide="moon" class="w-5 h-5 text-stone-600"></i> 昨夜眠歌
+                </h2>
+                
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
+                    <div class="bg-stone-100/50 p-4 rounded border border-stone-200/50">
+                        <span class="text-xs text-stone-500 block mb-1">入梦时刻</span>
+                        <span class="text-lg font-bold text-stone-800" id="dash-bedtime">23:00</span>
+                    </div>
+                    <div class="bg-stone-100/50 p-4 rounded border border-stone-200/50">
+                        <span class="text-xs text-stone-500 block mb-1">晨起时刻</span>
+                        <span class="text-lg font-bold text-stone-800" id="dash-waketime">07:00</span>
+                    </div>
+                    <div class="bg-stone-100/50 p-4 rounded border border-stone-200/50">
+                        <span class="text-xs text-stone-500 block mb-1">酣眠时长</span>
+                        <span class="text-lg font-bold text-stone-800" id="dash-duration">8.0 小时</span>
+                    </div>
+                    <div class="bg-stone-100/50 p-4 rounded border border-stone-200/50">
+                        <span class="text-xs text-stone-500 block mb-1">梦境质量</span>
+                        <span class="text-lg font-bold text-emerald-800" id="dash-quality">酣然入梦</span>
+                    </div>
+                </div>
+
+                <!-- 简易水墨进度条表示睡眠效率 -->
+                <div class="mt-6">
+                    <div class="flex justify-between text-xs text-stone-500 mb-1">
+                        <span>神定气足度（睡眠质量评分）</span>
+                        <span id="dash-score">90%</span>
+                    </div>
+                    <div class="w-full h-3 bg-stone-200 rounded-full overflow-hidden relative">
+                        <div id="dash-bar" class="h-full bg-gradient-to-r from-stone-500 to-stone-800 rounded-full transition-all duration-1000" style="width: 90%;"></div>
+                        <!-- 水墨氤氲纹路 -->
+                        <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-transparent via-white/10 to-transparent mix-blend-overlay"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 记一笔睡眠（表单） -->
+            <div class="xuan-paper p-6 rounded-lg">
+                <h2 class="text-lg font-semibold text-stone-800 mb-6 flex items-center gap-2">
+                    <i data-lucide="pen-tool" class="w-5 h-5 text-stone-600"></i> 记录昨夜眠息
+                </h2>
+                
+                <form id="sleep-form" class="space-y-6">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm text-stone-600 mb-2 font-medium">昨晚几时入眠？</label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i data-lucide="sunset" class="w-4 h-4 text-stone-400"></i>
+                                </span>
+                                <input type="time" id="input-bedtime" required class="pl-10 w-full bg-stone-50 border border-stone-300 rounded p-2 text-stone-800 focus:outline-none focus:ring-1 focus:ring-stone-600 focus:border-stone-600">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm text-stone-600 mb-2 font-medium">今晨几时醒来？</label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i data-lucide="sunrise" class="w-4 h-4 text-stone-400"></i>
+                                </span>
+                                <input type="time" id="input-waketime" required class="pl-10 w-full bg-stone-50 border border-stone-300 rounded p-2 text-stone-800 focus:outline-none focus:ring-1 focus:ring-stone-600 focus:border-stone-600">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm text-stone-600 mb-2 font-medium">睡眠品质</label>
+                        <div class="grid grid-cols-4 gap-2">
+                            <button type="button" onclick="selectQuality('restless', 1, '辗转难眠')" class="quality-btn p-3 rounded border text-sm transition-all duration-300 flex flex-col items-center gap-1 bg-white border-stone-200 hover:border-stone-400 text-stone-700" data-val="1">
+                                <span class="text-xl">😵‍💫</span>
+                                <span>难眠</span>
+                            </button>
+                            <button type="button" onclick="selectQuality('light', 2, '浅梦未稳')" class="quality-btn p-3 rounded border text-sm transition-all duration-300 flex flex-col items-center gap-1 bg-white border-stone-200 hover:border-stone-400 text-stone-700" data-val="2">
+                                <span class="text-xl">🌙</span>
+                                <span>浅梦</span>
+                            </button>
+                            <button type="button" onclick="selectQuality('good', 3, '安稳无忧')" class="quality-btn p-3 rounded border text-sm transition-all duration-300 flex flex-col items-center gap-1 bg-white border-stone-200 hover:border-stone-400 text-stone-700" data-val="3">
+                                <span class="text-xl">😌</span>
+                                <span>安稳</span>
+                            </button>
+                            <button type="button" onclick="selectQuality('deep', 4, '酣然香甜')" class="quality-btn p-3 rounded border text-sm transition-all duration-300 flex flex-col items-center gap-1 bg-white border-stone-200 hover:border-stone-400 text-stone-700" data-val="4">
+                                <span class="text-xl">🏮</span>
+                                <span>酣眠</span>
+                            </button>
+                        </div>
+                        <input type="hidden" id="input-quality" value="3" required>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm text-stone-600 mb-2 font-medium">庄周梦蝶（梦境随手记）</label>
+                        <textarea id="input-dream" rows="3" placeholder="昨夜可有仙鹤飞度，亦或惊涛骇浪？记下您的浮生一梦..." class="w-full bg-stone-50 border border-stone-300 rounded p-3 text-stone-800 placeholder-stone-400 focus:outline-none focus:ring-1 focus:ring-stone-600 focus:border-stone-600 font-sans text-sm"></textarea>
+                    </div>
+
+                    <div class="flex justify-end">
+                        <button type="submit" class="bg-stone-800 hover:bg-stone-700 text-stone-100 px-6 py-2.5 rounded transition-colors duration-300 font-medium tracking-widest text-sm flex items-center gap-2 shadow">
+                            <i data-lucide="save" class="w-4 h-4"></i> 烙下墨印
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+        </section>
+
+        <!-- 右侧：白噪音、助眠提示、历史墨迹 (5 cols) -->
+        <section class="lg:col-span-5 space-y-8">
+            
+            <!-- 溪山听雨（白噪音播放器） -->
+            <div class="xuan-paper p-6 rounded-lg overflow-hidden">
+                <div class="absolute top-0 right-0 p-2 opacity-5 pointer-events-none">
+                    <i data-lucide="music" class="w-24 h-24 text-stone-900"></i>
+                </div>
+                
+                <h2 class="text-lg font-semibold text-stone-800 mb-4 flex items-center gap-2">
+                    <i data-lucide="music-4" class="w-5 h-5 text-stone-600"></i> 溪山听雨
+                </h2>
+                <p class="text-xs text-stone-500 mb-6">戴上耳麦，于清风微雨、古琴幽静中徐徐入梦。</p>
+                
+                <div class="space-y-4">
+                    <!-- 声音源 1：山寺晚钟 -->
+                    <div class="flex items-center justify-between p-3 bg-stone-100/60 rounded border border-stone-200/50">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-full bg-stone-800 flex items-center justify-center text-stone-100">
+                                <i data-lucide="bell" class="w-4 h-4"></i>
+                            </div>
+                            <div>
+                                <span class="text-sm font-medium text-stone-800 block">山寺晚钟</span>
+                                <span class="text-2xs text-stone-400 font-sans block">古钟长鸣 涤荡心灵</span>
+                            </div>
+                        </div>
+                        <button onclick="toggleAudio('bell')" id="btn-bell" class="w-8 h-8 rounded-full bg-stone-200 hover:bg-stone-300 flex items-center justify-center transition-colors">
+                            <i data-lucide="play" class="w-4 h-4 text-stone-700"></i>
+                        </button>
+                    </div>
+
+                    <!-- 声音源 2：竹林清风 -->
+                    <div class="flex items-center justify-between p-3 bg-stone-100/60 rounded border border-stone-200/50">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-full bg-stone-800 flex items-center justify-center text-stone-100">
+                                <i data-lucide="wind" class="w-4 h-4"></i>
+                            </div>
+                            <div>
+                                <span class="text-sm font-medium text-stone-800 block">竹林清风</span>
+                                <span class="text-2xs text-stone-400 font-sans block">竹叶沙沙 晚风拂面</span>
+                            </div>
+                        </div>
+                        <button onclick="toggleAudio('wind')" id="btn-wind" class="w-8 h-8 rounded-full bg-stone-200 hover:bg-stone-300 flex items-center justify-center transition-colors">
+                            <i data-lucide="play" class="w-4 h-4 text-stone-700"></i>
+                        </button>
+                    </div>
+
+                    <!-- 声音源 3：空山细雨 -->
+                    <div class="flex items-center justify-between p-3 bg-stone-100/60 rounded border border-stone-200/50">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-full bg-stone-800 flex items-center justify-center text-stone-100">
+                                <i data-lucide="cloud-rain" class="w-4 h-4"></i>
+                            </div>
+                            <div>
+                                <span class="text-sm font-medium text-stone-800 block">空山细雨</span>
+                                <span class="text-2xs text-stone-400 font-sans block">沥沥秋雨 润物无声</span>
+                            </div>
+                        </div>
+                        <button onclick="toggleAudio('rain')" id="btn-rain" class="w-8 h-8 rounded-full bg-stone-200 hover:bg-stone-300 flex items-center justify-center transition-colors">
+                            <i data-lucide="play" class="w-4 h-4 text-stone-700"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 定时关闭器 -->
+                <div class="mt-6 pt-4 border-t border-stone-200/60">
+                    <div class="flex justify-between items-center text-xs text-stone-500 mb-2">
+                        <span>听曲定时（分）</span>
+                        <span id="timer-val">30 分钟</span>
+                    </div>
+                    <input type="range" id="sound-timer" min="5" max="120" step="5" value="30" oninput="updateTimerText(this.value)" class="w-full">
+                </div>
+            </div>
+
+            <!-- 养生神道（睡眠建议） -->
+            <div class="xuan-paper p-6 rounded-lg bg-stone-900 text-stone-100 border-none shadow-2xl">
+                <!-- 水墨竹影微透 -->
+                <div class="absolute inset-0 bg-cover bg-center opacity-10 pointer-events-none" style="background-image: url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><path d=%22M10,90 Q15,40 25,10 M25,10 Q40,5 50,30 M50,30 Q35,55 10,90%22 fill=%22none%22 stroke=%22%23ffffff%22 stroke-width=%220.5%22/><path d=%22M50,90 Q65,50 80,15 M80,15 Q90,35 70,60%22 fill=%22none%22 stroke=%22%23ffffff%22 stroke-width=%220.5%22/></svg>');"></div>
+                
+                <div class="relative z-10">
+                    <h2 class="text-lg font-semibold text-stone-100 mb-4 flex items-center gap-2">
+                        <i data-lucide="heart" class="w-5 h-5 text-stone-300"></i> 眠中养生
+                    </h2>
+                    
+                    <div class="space-y-4 text-sm leading-relaxed text-stone-300">
+                        <p id="tips-text">「子时大睡，午时小憩。」中医学以为，子时（夜半十一时至一时）是阴阳交替、阴气最盛之时，此时入眠可调和百脉。睡前宜淡虑静心思，可温水泡足，温阳驱寒。</p>
+                        <div class="flex justify-between items-center pt-2 border-t border-stone-800">
+                            <span class="text-2xs text-stone-500 font-sans">《千金要方·道林养性》</span>
+                            <button onclick="changeTip()" class="text-xs text-stone-400 hover:text-stone-200 transition-colors flex items-center gap-1">
+                                <i data-lucide="refresh-cw" class="w-3 h-3"></i> 换一则
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- 底部：历史墨迹（滚轴折叠卷轴效果） -->
+    <section class="relative z-10 max-w-6xl w-full mx-auto mb-8">
+        <div class="xuan-paper p-6 rounded-lg">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-lg font-semibold text-stone-800 flex items-center gap-2">
+                    <i data-lucide="scroll" class="w-5 h-5 text-stone-600"></i> 历史眠息画卷
+                </h2>
+                <button onclick="clearHistory()" class="text-xs text-red-700 hover:text-red-900 transition-colors flex items-center gap-1 font-sans">
+                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> 清空墨迹
+                </button>
+            </div>
+
+            <!-- 画卷容器 -->
+            <div class="overflow-x-auto no-scrollbar pb-2" style="scroll-snap-type: x mandatory;">
+                <div id="history-container" class="flex space-x-6 min-w-max px-2">
+                    <!-- 动态渲染历史卡片 -->
+                    <div class="text-stone-400 py-12 text-center w-full">一纸空白，静待您落笔记录昨夜美梦...</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 底部注脚 -->
+    <footer class="relative z-10 max-w-6xl w-full mx-auto text-center py-4 border-t border-stone-300/40">
+        <p class="text-xs text-stone-400 font-sans">
+            © 2026 静心眠阁 - 水墨一席，伴君酣然。
+        </p>
+    </footer>
+
+    <!-- 自定义信息展示框 (替代 alert) -->
+    <div id="toast" class="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-stone-900 text-stone-100 text-sm px-6 py-3 rounded-full shadow-2xl opacity-0 pointer-events-none transition-all duration-300 z-50 flex items-center gap-2">
+        <i data-lucide="info" class="w-4 h-4 text-stone-300"></i>
+        <span id="toast-message">墨迹已保存</span>
+    </div>
+
+    <!-- Web Audio API 模拟白噪音生成器 -->
+    <script>
+        // 初始状态与本地存储
+        let sleepHistory = [];
+        const APP_KEY = 'moxiang_sleep_logs';
+
+        // 预设养生小贴士
+        const sleepTips = [
+            "「子时大睡，午时小憩。」中医学以为，子时（夜半十一时至一时）是阴阳交替、阴气最盛之时，此时入眠可调和百脉。睡前宜淡虑静心思，可温水泡足，温阳驱寒。",
+            "「先睡心，后睡眼。」睡前半小时不宜思虑繁重，放下手机或账簿，闭目养神，深呼吸数次，让心神归于寂静，方能酣然入梦。",
+            "「胃不和则卧不安。」晚饭切忌过饱，亦不宜多食辛辣肥甘。晚餐若过重，则脾胃不停运转，内扰心神，易致夜卧不安、多梦易醒。",
+            "「夏忌贪凉，冬忌蒙头。」顺应四季变化，夏季不可贪凉露宿或直吹风扇，易受风寒；冬季不宜蒙头大睡，以免浊气内闭，影响清阳之气。",
+            "「头对风，暖烘烘；脚对风，请郎中。」头部宜保持凉爽，脚部宜保暖。睡前用温水洗脚，不仅能引火归元，亦可促进全身气血通畅。"
+        ];
+
+        let currentTipIndex = 0;
+
+        // 初始化
+        window.onload = function() {
+            lucide.createIcons();
+            loadHistory();
+            initDate();
+            initFormDefaults();
+        };
+
+        // 设置时间与节气等
+        function initDate() {
+            const now = new Date();
+            
+            // 公历
+            const year = now.getFullYear();
+            const month = now.getMonth() + 1;
+            const date = now.getDate();
+            document.getElementById('date-gregorian').innerText = `${year}年${month}月${date}日`;
+
+            // 天干地支农历简单模拟 (2026年为丙午马年)
+            const ganZhiYear = "丙午"; 
+            const lunarMonths = ["正月", "二月", "三月", "四月", "端月", "荷月", "兰月", "桂月", "菊月", "良月", "冬月", "腊月"];
+            const lunarMonth = lunarMonths[now.getMonth()];
+            
+            // 二十四节气简单计算与展示
+            const solarTerms = ["小寒", "大寒", "立春", "雨水", "惊蛰", "春分", "清明", "谷雨", "立夏", "小满", "芒种", "夏至", "小暑", "大暑", "立秋", "处暑", "白露", "秋分", "寒露", "霜降", "立冬", "小雪", "大雪", "冬至"];
+            // 粗略根据月份估计节气
+            const approxTerm = solarTerms[now.getMonth() * 2 + (now.getDate() > 15 ? 1 : 0)];
+
+            document.getElementById('date-lunar').innerText = `${ganZhiYear}年 ${lunarMonth} 初`;
+            document.getElementById('date-solar-term').innerText = `✦ 时至${approxTerm} · 静心眠 ✦`;
+        }
+
+        // 初始化表单默认值 (昨晚11点入睡，今早7点起床)
+        function initFormDefaults() {
+            document.getElementById('input-bedtime').value = '23:00';
+            document.getElementById('input-waketime').value = '07:00';
+            selectQuality('good', 3, '安稳无忧');
+        }
+
+        // 历史记录加载
+        function loadHistory() {
+            const stored = localStorage.getItem(APP_KEY);
+            if (stored) {
+                try {
+                    sleepHistory = JSON.parse(stored);
+                } catch(e) {
+                    sleepHistory = [];
+                }
+            } else {
+                // 默认填充一两条精致的水墨假数据，增强初次打开时的视觉效果
+                sleepHistory = [
+                    {
+                        id: 'demo-1',
+                        date: '7月14日',
+                        bedtime: '22:45',
+                        waketime: '06:45',
+                        duration: 8.0,
+                        quality: '酣然香甜',
+                        qualityVal: 4,
+                        dream: '梦见泛舟于西湖之上，周围荷花映日，竹影摇曳，有一仙翁弈棋。'
+                    },
+                    {
+                        id: 'demo-2',
+                        date: '7月13日',
+                        bedtime: '23:20',
+                        waketime: '07:00',
+                        duration: 6.6,
+                        quality: '安稳无忧',
+                        qualityVal: 3,
+                        dream: '无甚大梦，唯觉睡醒后松骨清神，窗外有鸟鸣雀跃之声。'
+                    }
+                ];
+                localStorage.setItem(APP_KEY, JSON.stringify(sleepHistory));
+            }
+            renderHistory();
+            updateDashboard();
+        }
+
+        // 更新仪表盘
+        function updateDashboard() {
+            if (sleepHistory.length === 0) {
+                document.getElementById('dash-bedtime').innerText = '--:--';
+                document.getElementById('dash-waketime').innerText = '--:--';
+                document.getElementById('dash-duration').innerText = '0 小时';
+                document.getElementById('dash-quality').innerText = '暂无记录';
+                document.getElementById('dash-score').innerText = '0%';
+                document.getElementById('dash-bar').style.width = '0%';
+                return;
+            }
+
+            const latest = sleepHistory[0];
+            document.getElementById('dash-bedtime').innerText = latest.bedtime;
+            document.getElementById('dash-waketime').innerText = latest.waketime;
+            document.getElementById('dash-duration').innerText = `${latest.duration} 小时`;
+            document.getElementById('dash-quality').innerText = latest.quality;
+            
+            // 计算质量评分
+            const scoreMap = { 1: 35, 2: 60, 3: 85, 4: 98 };
+            const score = scoreMap[latest.qualityVal] || 80;
+            document.getElementById('dash-score').innerText = `${score}%`;
+            document.getElementById('dash-bar').style.width = `${score}%`;
+        }
+
+        // 渲染历史卡片
+        function renderHistory() {
+            const container = document.getElementById('history-container');
+            if (sleepHistory.length === 0) {
+                container.innerHTML = `<div class="text-stone-400 py-12 text-center w-full font-sans">一纸空白，静待您落笔记录昨夜美梦...</div>`;
+                return;
+            }
+
+            let html = '';
+            sleepHistory.forEach((log) => {
+                // 根据质量选择不同的水墨背景深浅
+                const qualityColors = {
+                    1: { bg: 'bg-zinc-100', text: 'text-zinc-600', seal: '难眠' },
+                    2: { bg: 'bg-stone-100', text: 'text-stone-600', seal: '浅梦' },
+                    3: { bg: 'bg-orange-50/50', text: 'text-stone-800', seal: '安稳' },
+                    4: { bg: 'bg-amber-50/60', text: 'text-amber-900', seal: '酣然' }
+                };
+
+                const style = qualityColors[log.qualityVal] || qualityColors[3];
+
+                html += `
+                <div class="xuan-paper p-5 rounded-lg w-72 sm:w-80 flex-shrink-0 transition-all duration-300 hover:shadow-xl hover:-translate-y-1" style="scroll-snap-align: start;">
+                    <!-- 卡片顶部 -->
+                    <div class="flex justify-between items-start mb-4 border-b border-stone-200 pb-2">
+                        <div>
+                            <span class="text-xs text-stone-500 font-sans block">眠归之日</span>
+                            <span class="text-sm font-bold text-stone-800">${log.date}</span>
+                        </div>
+                        <div class="seal text-2xs" style="border-color: ${log.qualityVal === 4 ? '#a61c1c' : '#4a4a4a'}; color: ${log.qualityVal === 4 ? '#a61c1c' : '#4a4a4a'};">
+                            ${style.seal}
+                        </div>
+                    </div>
+
+                    <!-- 时间数据 -->
+                    <div class="grid grid-cols-3 gap-2 text-center mb-4">
+                        <div class="bg-stone-100/70 p-2 rounded">
+                            <span class="text-3xs text-stone-400 block font-sans">入眠</span>
+                            <span class="text-xs font-bold text-stone-700">${log.bedtime}</span>
+                        </div>
+                        <div class="bg-stone-100/70 p-2 rounded">
+                            <span class="text-3xs text-stone-400 block font-sans">觉醒</span>
+                            <span class="text-xs font-bold text-stone-700">${log.waketime}</span>
+                        </div>
+                        <div class="bg-stone-100/70 p-2 rounded">
+                            <span class="text-3xs text-stone-400 block font-sans">消长</span>
+                            <span class="text-xs font-bold text-stone-700">${log.duration}h</span>
+                        </div>
+                    </div>
+
+                    <!-- 梦境笔谈 -->
+                    <div class="mt-2">
+                        <span class="text-3xs text-stone-400 block font-sans mb-1">庄周化蝶记：</span>
+                        <p class="text-xs text-stone-600 italic font-serif leading-relaxed line-clamp-3 bg-stone-50 p-2 rounded border border-dashed border-stone-200">
+                            ${log.dream ? log.dream : '此夜平顺无梦，神静气闲。'}
+                        </p>
+                    </div>
+                </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // 选择睡眠质量
+        function selectQuality(type, val, text) {
+            document.getElementById('input-quality').value = val;
+            
+            // 样式重置
+            document.querySelectorAll('.quality-btn').forEach(btn => {
+                btn.classList.remove('bg-stone-800', 'text-stone-100', 'border-stone-800');
+                btn.classList.add('bg-white', 'text-stone-700', 'border-stone-200');
+            });
+
+            // 高亮选中
+            const activeBtn = document.querySelector(`.quality-btn[data-val="${val}"]`);
+            if (activeBtn) {
+                activeBtn.classList.remove('bg-white', 'text-stone-700', 'border-stone-200');
+                activeBtn.classList.add('bg-stone-800', 'text-stone-100', 'border-stone-800');
+            }
+        }
+
+        // 计算时间差 (支持跨天计算，即前一天晚上睡，第二天醒)
+        function calculateDuration(bedtime, waketime) {
+            const [bedH, bedM] = bedtime.split(':').map(Number);
+            const [wakeH, wakeM] = waketime.split(':').map(Number);
+            
+            let bedMinutes = bedH * 60 + bedM;
+            let wakeMinutes = wakeH * 60 + wakeM;
+
+            if (wakeMinutes < bedMinutes) {
+                // 跨天了，醒来时间加24小时
+                wakeMinutes += 24 * 60;
+            }
+
+            const diffMinutes = wakeMinutes - bedMinutes;
+            const hours = (diffMinutes / 60).toFixed(1);
+            return parseFloat(hours);
+        }
+
+        // 提交睡眠表单
+        document.getElementById('sleep-form').onsubmit = function(e) {
+            e.preventDefault();
+
+            const bedtime = document.getElementById('input-bedtime').value;
+            const waketime = document.getElementById('input-waketime').value;
+            const qualityVal = parseInt(document.getElementById('input-quality').value);
+            const dream = document.getElementById('input-dream').value;
+
+            // 映射睡眠质量文字描述
+            const qualityTextMap = {
+                1: '辗转难眠',
+                2: '浅梦未稳',
+                3: '安稳无忧',
+                4: '酣然香甜'
+            };
+            const quality = qualityTextMap[qualityVal] || '安稳无忧';
+
+            // 计算时间
+            const duration = calculateDuration(bedtime, waketime);
+
+            // 获取今日日期文本 (比如: 7月15日)
+            const now = new Date();
+            const dateStr = `${now.getMonth() + 1}月${now.getDate()}日`;
+
+            const newLog = {
+                id: 'log-' + Date.now(),
+                date: dateStr,
+                bedtime: bedtime,
+                waketime: waketime,
+                duration: duration,
+                quality: quality,
+                qualityVal: qualityVal,
+                dream: dream
+            };
+
+            // 头部插入
+            sleepHistory.unshift(newLog);
+            localStorage.setItem(APP_KEY, JSON.stringify(sleepHistory));
+
+            // 更新 UI
+            renderHistory();
+            updateDashboard();
+
+            // 重置 dream 文本输入框
+            document.getElementById('input-dream').value = '';
+
+            showToast("墨迹已洇，昨夜眠息已安稳记录。");
+        };
+
+        // 换一则睡眠小贴士
+        function changeTip() {
+            currentTipIndex = (currentTipIndex + 1) % sleepTips.length;
+            document.getElementById('tips-text').style.opacity = 0;
+            setTimeout(() => {
+                document.getElementById('tips-text').innerText = sleepTips[currentTipIndex];
+                document.getElementById('tips-text').style.opacity = 1;
+            }, 300);
+        }
+
+        // 清空历史记录
+        function clearHistory() {
+            if (confirm("阁下确定要拂去宣纸上所有的睡眠墨迹吗？")) {
+                sleepHistory = [];
+                localStorage.setItem(APP_KEY, JSON.stringify(sleepHistory));
+                renderHistory();
+                updateDashboard();
+                showToast("画卷已重归于空白。");
+            }
+        }
+
+        // 信息提示框
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-message').innerText = msg;
+            toast.style.opacity = 1;
+            toast.style.transform = 'translate(-50%, -10px)';
+
+            setTimeout(() => {
+                toast.style.opacity = 0;
+                toast.style.transform = 'translate(-50%, 0px)';
+            }, 3000);
+        }
+
+        // 更新定时器显示
+        function updateTimerText(val) {
+            document.getElementById('timer-val').innerText = `${val} 分钟`;
+        }
+
+
+        // ==========================================
+        // WEB AUDIO API - 助眠声音发生器 (完全原生无外部链接依赖)
+        // ==========================================
+        const audioCtxClass = window.AudioContext || window.webkitAudioContext;
+        let audioCtx = null;
+        let activeSources = {}; // 用于存储各种白噪音的节点
+        let timerId = null;
+
+        function getAudioContext() {
+            if (!audioCtx) {
+                audioCtx = new audioCtxClass();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            return audioCtx;
+        }
+
+        // 启动/停止某种特定的声音
+        function toggleAudio(type) {
+            const ctx = getAudioContext();
+            const btn = document.getElementById(`btn-${type}`);
+
+            if (activeSources[type]) {
+                // 正在播放，执行停止
+                stopSound(type);
+                btn.innerHTML = `<i data-lucide="play" class="w-4 h-4 text-stone-700"></i>`;
+                btn.classList.remove('bg-stone-800');
+                btn.classList.add('bg-stone-200');
+                lucide.createIcons();
+            } else {
+                // 未播放，开始生成声音
+                let sourceNode = null;
+                if (type === 'bell') {
+                    sourceNode = playTempleBell(ctx);
+                } else if (type === 'wind') {
+                    sourceNode = playWind(ctx);
+                } else if (type === 'rain') {
+                    sourceNode = playRain(ctx);
+                }
+
+                if (sourceNode) {
+                    activeSources[type] = sourceNode;
+                    btn.innerHTML = `<i data-lucide="square" class="w-4 h-4 text-white"></i>`;
+                    btn.classList.remove('bg-stone-200');
+                    btn.classList.add('bg-stone-800');
+                    lucide.createIcons();
+                    startGlobalTimer();
+                }
+            }
+        }
+
+        function stopSound(type) {
+            if (activeSources[type]) {
+                try {
+                    activeSources[type].stop();
+                } catch(e) {}
+                delete activeSources[type];
+            }
+        }
+
+        // 播放山寺晚钟 (金属共振音 + 慢衰减)
+        function playTempleBell(ctx) {
+            // 每隔 12 秒敲响一次
+            const containerNode = {
+                intervalId: null,
+                stop: function() {
+                    clearInterval(this.intervalId);
+                }
+            };
+
+            const triggerBell = () => {
+                const now = ctx.currentTime;
+                // 钟声包含基频和多个非谐波泛音
+                const freqs = [110, 222, 335, 442, 550, 668, 880];
+                const gainNode = ctx.createGain();
+                gainNode.gain.setValueAtTime(0, now);
+                gainNode.gain.linearRampToValueAtTime(0.15, now + 0.05); // 快速敲击
+                gainNode.gain.exponentialRampToValueAtTime(0.0001, now + 10); // 长长的余音
+
+                freqs.forEach((freq, idx) => {
+                    const osc = ctx.createOscillator();
+                    osc.type = 'sine';
+                    osc.frequency.value = freq;
+                    
+                    // 泛音振幅衰减快
+                    const oscGain = ctx.createGain();
+                    oscGain.gain.setValueAtTime(idx === 0 ? 0.8 : 0.3 / idx, now);
+                    
+                    osc.connect(oscGain);
+                    oscGain.connect(gainNode);
+                    osc.start(now);
+                    osc.stop(now + 10.5);
+                });
+
+                gainNode.connect(ctx.destination);
+            };
+
+            // 立即敲击第一次，随后周期循环
+            triggerBell();
+            containerNode.intervalId = setInterval(triggerBell, 12000);
+
+            return containerNode;
+        }
+
+        // 播放竹林清风 (粉红噪音 + 极低频带通扫频模拟晚风)
+        function playWind(ctx) {
+            // 1. 生成白噪音缓冲
+            const bufferSize = 2 * ctx.sampleRate;
+            const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+            const output = noiseBuffer.getChannelData(0);
+            
+            // 使用简易粉红噪音生成算法
+            let b0, b1, b2, b3, b4, b5, b6;
+            b0 = b1 = b2 = b3 = b4 = b5 = b6 = 0.0;
+            for (let i = 0; i < bufferSize; i++) {
+                let white = Math.random() * 2 - 1;
+                b0 = 0.99886 * b0 + white * 0.0555179;
+                b1 = 0.99332 * b1 + white * 0.0750759;
+                b2 = 0.96900 * b2 + white * 0.1538520;
+                b3 = 0.86650 * b3 + white * 0.3104856;
+                b4 = 0.55000 * b4 + white * 0.5329522;
+                b5 = -0.7616 * b5 - white * 0.0168980;
+                output[i] = b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362;
+                output[i] *= 0.11; // 适当控音量
+                b6 = white * 0.115926;
+            }
+
+            const noiseSource = ctx.createBufferSource();
+            noiseSource.buffer = noiseBuffer;
+            noiseSource.loop = true;
+
+            // 2. 带通滤波器做风声扫频
+            const filter = ctx.createBiquadFilter();
+            filter.type = 'bandpass';
+            filter.Q.value = 3.0;
+
+            const gainNode = ctx.createGain();
+            gainNode.gain.value = 0.35;
+
+            noiseSource.connect(filter);
+            filter.connect(gainNode);
+            gainNode.connect(ctx.destination);
+
+            // 3. 缓慢且自然地波动频率
+            const osc = ctx.createOscillator();
+            const oscGain = ctx.createGain();
+            osc.frequency.value = 0.08; // 极低频，12秒一个周期
+            oscGain.gain.value = 150; // 频率调制范围
+            
+            filter.frequency.value = 400; // 风的基频
+
+            osc.connect(oscGain);
+            oscGain.connect(filter.frequency);
+            
+            osc.start();
+            noiseSource.start();
+
+            // 组合控制包，用于统一停止
+            return {
+                stop: function() {
+                    noiseSource.stop();
+                    osc.stop();
+                }
+            };
+        }
+
+        // 播放空山细雨 (高通加带通滤波器处理白噪音，高频细沙声代表雨滴)
+        function playRain(ctx) {
+            const bufferSize = 2 * ctx.sampleRate;
+            const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+            const output = noiseBuffer.getChannelData(0);
+            for (let i = 0; i < bufferSize; i++) {
+                output[i] = Math.random() * 2 - 1;
+            }
+
+            const noiseSource = ctx.createBufferSource();
+            noiseSource.buffer = noiseBuffer;
+            noiseSource.loop = true;
+
+            const filter = ctx.createBiquadFilter();
+            filter.type = 'highpass';
+            filter.frequency.value = 1000; // 去除低频隆隆声
+
+            const filter2 = ctx.createBiquadFilter();
+            filter2.type = 'peaking';
+            filter2.frequency.value = 2500;
+            filter2.gain.value = 6;
+
+            const gainNode = ctx.createGain();
+            gainNode.gain.value = 0.12; // 雨声通常很柔和
+
+            noiseSource.connect(filter);
+            filter.connect(filter2);
+            filter2.connect(gainNode);
+            gainNode.connect(ctx.destination);
+
+            noiseSource.start();
+
+            return {
+                stop: function() {
+                    noiseSource.stop();
+                }
+            };
+        }
+
+        // 助眠倒计时
+        function startGlobalTimer() {
+            if (timerId) return; // 已经有计时器在工作
+
+            timerId = setInterval(() => {
+                const slider = document.getElementById('sound-timer');
+                let leftMinutes = parseInt(slider.value);
+                
+                if (leftMinutes <= 1) {
+                    // 时间到，全部静音
+                    clearInterval(timerId);
+                    timerId = null;
+                    slider.value = 5;
+                    updateTimerText(5);
+                    
+                    // 停止所有音频
+                    ['bell', 'wind', 'rain'].forEach(type => {
+                        if (activeSources[type]) {
+                            stopSound(type);
+                            const btn = document.getElementById(`btn-${type}`);
+                            btn.innerHTML = `<i data-lucide="play" class="w-4 h-4 text-stone-700"></i>`;
+                            btn.classList.remove('bg-stone-800');
+                            btn.classList.add('bg-stone-200');
+                        }
+                    });
+                    lucide.createIcons();
+                    showToast("漏刻已尽，助眠之音缓缓散去。");
+                } else {
+                    leftMinutes -= 1;
+                    slider.value = leftMinutes;
+                    updateTimerText(leftMinutes);
+                }
+            }, 60000); // 每一分钟轮询一次
+        }
+    </script>
+</body>
+</html>
+
